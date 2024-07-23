@@ -4,6 +4,7 @@ import hmac
 import json
 import random
 import requests
+import time
 import websockets
 
 
@@ -35,7 +36,7 @@ print(pan, merchant_code, secret)
 amount = str(1)
 remarks1 = 'test1'
 remarks2 = 'test2'
-prn = str(random.randint(1000000000, 9999999999))
+prn = str(int(time.time()))
 
 x = requests.post('https://merchantapi.fonepay.com/api/merchant/merchantDetailsForThirdParty/thirdPartyDynamicQrDownload',
                   json={
