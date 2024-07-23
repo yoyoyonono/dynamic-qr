@@ -1,14 +1,18 @@
 import asyncio
-import requests
-import random
-import hmac
 import hashlib
+import hmac
+import json
+import random
+import requests
 import websockets
 
 
 async def handle_socket(url: str):
     async for ws in websockets.connect(url):
-        print(await ws.recv())
+        message = json.loads(await ws.recv())
+        print(message)
+        if "paymentSuccess" in json.loads(message['transactionStatus']):
+            return
 
 
 def generate_sha512_hmac(data, secret):
@@ -48,6 +52,9 @@ x = requests.post('https://merchantapi.fonepay.com/api/merchant/merchantDetailsF
 response = x.json()
 
 print(response['qrMessage'])
+with open('qr.txt', 'w') as f:
+    f.write(response['qrMessage'])
 print(response['merchantWebSocketUrl'])
 
-asyncio.get_event_loop().run_until_complete(handle_socket(response['merchantWebSocketUrl']))
+asyncio.get_event_loop().run_until_complete(
+    handle_socket(response['merchantWebSocketUrl']))
