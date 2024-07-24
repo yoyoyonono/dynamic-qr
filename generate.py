@@ -1,19 +1,13 @@
-import asyncio
 import hashlib
 import hmac
 import json
 import random
 import requests
+import sys
 import time
 import websockets
 
 
-async def handle_socket(url: str):
-    async for ws in websockets.connect(url):
-        message = json.loads(await ws.recv())
-        print(message)
-        if "paymentSuccess" in json.loads(message['transactionStatus']):
-            return
 
 
 def generate_sha512_hmac(data, secret):
@@ -33,7 +27,7 @@ with open('key.txt') as f:
 
 print(pan, merchant_code, secret)
 
-amount = str(1)
+amount = str(sys.argv[1])
 remarks1 = 'test1'
 remarks2 = 'test2'
 prn = str(int(time.time()))
@@ -56,6 +50,6 @@ print(response['qrMessage'])
 with open('qr.txt', 'w') as f:
     f.write(response['qrMessage'])
 print(response['merchantWebSocketUrl'])
+with open ('url.txt', 'w') as f:
+    f.write(response['merchantWebSocketUrl'])
 
-asyncio.get_event_loop().run_until_complete(
-    handle_socket(response['merchantWebSocketUrl']))
